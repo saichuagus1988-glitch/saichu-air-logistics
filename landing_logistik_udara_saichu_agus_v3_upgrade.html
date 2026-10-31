@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Saichu Agus Air Logistics - Kalkulator estimasi ongkir udara berdasarkan tujuan, berat aktual dan berat volumetrik.">
+<title>Saichu Agus | Air Logistics V3</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#14213d;line-height:1.55}
+.hero{background:linear-gradient(135deg,#061a38,#0872c9);color:#fff;text-align:center;padding:48px 18px 65px}
+.logo{font-weight:800;letter-spacing:1px;margin-bottom:25px}.hero h1{font-size:clamp(34px,8vw,58px);line-height:1.05;margin:0 0 15px}.hero h1 span{color:#63d7ff}.hero p{max-width:760px;margin:0 auto 25px;color:#e7f5ff;font-size:17px}
+.btn{display:inline-block;border:0;background:#18b86a;color:#fff;text-decoration:none;padding:14px 24px;border-radius:9px;font-weight:800;cursor:pointer;font-size:16px}
+.container{max-width:1080px;margin:auto;padding:45px 18px}.title{text-align:center;font-size:30px;margin:0 0 8px}.sub{text-align:center;color:#667085;margin:0 0 28px}
+.calculator{max-width:850px;margin:auto;background:#fff;padding:28px;border-radius:18px;box-shadow:0 10px 35px #17365d18}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field label{display:block;font-weight:700;margin-bottom:7px}.field input,.field select{width:100%;padding:13px;border:1px solid #d5dde8;border-radius:9px;font-size:16px;background:#fff}
+.dimensions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.hint{font-size:12px;color:#667085;margin-top:5px}
+.full{grid-column:1/-1}.result{margin-top:25px;background:#eef7ff;border-radius:14px;padding:22px}.result h3{margin:0 0 12px}.rows{display:grid;gap:7px}.row{display:flex;justify-content:space-between;gap:15px;border-bottom:1px solid #dbe8f5;padding:7px 0}.row:last-child{border:0}.total{font-size:30px;font-weight:900;color:#0872c9;text-align:center;padding-top:13px}.actions{text-align:center;margin-top:18px}.note{font-size:12px;color:#667085;margin-top:15px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;padding:24px;border-radius:15px;box-shadow:0 7px 25px #17365d12}.icon{font-size:34px}.card h3{margin:8px 0}.card p{color:#667085}
+.contact{background:#071b3a;color:#fff;text-align:center}.contact p{color:#dcecff}footer{background:#041126;color:#aebdd0;text-align:center;padding:20px;font-size:13px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.dimensions{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.calculator{padding:20px}.row{font-size:14px}.total{font-size:26px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+<div class="logo">✈ SAICHU AGUS • AIR LOGISTICS</div>
+<h1>Air Cargo<br><span>Shipping Calculator</span></h1>
+<p>Hitung estimasi ongkir berdasarkan tujuan, berat aktual, dimensi barang, dan jenis layanan.</p>
+<a class="btn" href="#calculator">🧮 Hitung Ongkir</a>
+</header>
+
+<section class="container" id="calculator">
+<h2 class="title">Kalkulator Estimasi Ongkir</h2>
+<p class="sub">Masukkan data barang Anda. Sistem akan membandingkan berat aktual dengan berat volumetrik.</p>
+
+<div class="calculator">
+<div class="grid">
+
+<div class="field">
+<label for="destination">Tujuan</label>
+<select id="destination" onchange="calculate()">
+<option value="AAP">Samarinda – APT Pranoto (AAP) — Rp 47.500/kg</option>
+<option value="AMQ">Ambon – Pattimura (AMQ) — Rp 60.500/kg</option>
+<option value="BDJ">Banjarmasin – Syamsudin Noor (BDJ) — Rp 39.500/kg</option>
+<option value="BEJ">Berau – Kalimarau (BEJ) — Rp 71.500/kg</option>
+<option value="BIK">Biak – Frans Kaisiepo (BIK) — Rp 87.500/kg</option>
+<option value="BKS">Bengkulu – Fatmawati Soekarno (BKS) — Rp 25.500/kg</option>
+<option value="BPN">Balikpapan – Sepinggan (BPN) — Rp 36.000/kg</option>
+<option value="BTH">Batam – Hang Nadim (BTH) — Rp 33.500/kg</option>
+<option value="BTJ">Banda Aceh – Sultan Iskandar Muda (BTJ) — Rp 42.500/kg</option>
+<option value="BWX">Banyuwangi – Blimbingsari (BWX) — Rp 25.500/kg</option>
+<option value="DHX">Kediri – Dhoho (DHX) — Rp 25.500/kg</option>
+<option value="DJB">Jambi – Sultan Thaha Syaifudin (DJB) — Rp 25.500/kg</option>
+<option value="DJJ">Jayapura – Sentani (DJJ) — Rp 82.500/kg</option>
+<option value="DPS">Denpasar – I Gusti Ngurah Rai (DPS) — Rp 22.500/kg</option>
+<option value="DTB">Siborong-borong – Silangit (DTB) — Rp 38.000/kg</option>
+<option value="GNS">Gunungsitoli – Binaka (GNS) — Rp 58.500/kg</option>
+<option value="GTO">Gorontalo – Djalaluddin (GTO) — Rp 60.000/kg</option>
+<option value="KDI">Kendari – Halu Oleo (KDI) — Rp 57.000/kg</option>
+<option value="KNO">Medan – Kualanamu (KNO) — Rp 35.500/kg</option>
+<option value="KOE">Kupang – El Tari (KOE) — Rp 58.500/kg</option>
+<option value="LBJ">Labuan Bajo – Komodo (LBJ) — Rp 61.000/kg</option>
+<option value="LOP">Lombok – Zainuddin A. Madjid (LOP) — Rp 30.000/kg</option>
+<option value="MDC">Manado – Sam Ratulangi (MDC) — Rp 62.000/kg</option>
+<option value="MKQ">Merauke – Mopah (MKQ) — Rp 98.500/kg</option>
+<option value="MLG">Malang – Abdurrahman Saleh (MLG) — Rp 27.500/kg</option>
+<option value="PDG">Padang – Minangkabau (PDG) — Rp 28.500/kg</option>
+<option value="PGK">Pangkal Pinang – Depati Amir (PGK) — Rp 30.500/kg</option>
+<option value="PKN">Pangkalan Bun – Iskandar (PKN) — Rp 36.000/kg</option>
+<option value="PKU">Pekanbaru – Sultan Syarif Kasim II (PKU) — Rp 33.500/kg</option>
+<option value="PKY">Palangkaraya – Tjilik Riwut (PKY) — Rp 34.000/kg</option>
+<option value="PLM">Palembang – Mahmud Badaruddin (PLM) — Rp 29.500/kg</option>
+<option value="PLW">Palu – Mutiara SIS Al-Jufrie (PLW) — Rp 58.000/kg</option>
+<option value="PNK">Pontianak – Supadio (PNK) — Rp 34.500/kg</option>
+<option value="SOC">Solo – Adi Soemarmo (SOC) — Rp 25.500/kg</option>
+<option value="SOQ">Sorong – Domine Edward Osok (SOQ) — Rp 80.500/kg</option>
+<option value="SRG">Semarang – Ahmad Yani (SRG) — Rp 25.500/kg</option>
+<option value="SUB">Surabaya – Juanda (SUB) — Rp 27.500/kg</option>
+<option value="TIM">Timika – Mozes Kilangin (TIM) — Rp 114.000/kg</option>
+<option value="TJQ">Tanjung Pandan – H.A.S. Hanandjoeddin (TJQ) — Rp 34.000/kg</option>
+<option value="TKG">Tanjung Karang – Raden Inten II (TKG) — Rp 25.500/kg</option>
+<option value="TMC">Tambolaka – Tambolaka (TMC) — Rp 64.000/kg</option>
+<option value="TNJ">Tanjung Pinang – Raja Haji Fisabilillah (TNJ) — Rp 55.500/kg</option>
+<option value="TRK">Tarakan – Juwata (TRK) — Rp 51.500/kg</option>
+<option value="TTE">Ternate – Sultan Babullah (TTE) — Rp 70.000/kg</option>
+<option value="UPG">Makassar – Sultan Hasanuddin (UPG) — Rp 50.000/kg</option>
+<option value="YIA">Yogyakarta – Yogyakarta (YIA) — Rp 27.000/kg</option>
+</select>
+</div>
+
+<div class="field">
+<label for="service">Jenis Layanan</label>
+<select id="service" onchange="calculate()">
+<option value="1">Air Freight</option>
+<option value="1.2">Express Air Freight (+20%)</option>
+</select>
+</div>
+
+<div class="field">
+<label for="weight">Berat Aktual (kg)</label>
+<input id="weight" type="number" min="0.1" step="0.1" value="10" oninput="calculate()">
+</div>
+
+<div class="field">
+<label for="pieces">Jumlah Koli</label>
+<input id="pieces" type="number" min="1" step="1" value="1" oninput="calculate()">
+</div>
+
+<div class="field full">
+<label>Dimensi per Koli (cm)</label>
+<div class="dimensions">
+<input id="length" type="number" min="1" value="50" oninput="calculate()" placeholder="Panjang">
+<input id="width" type="number" min="1" value="40" oninput="calculate()" placeholder="Lebar">
+<input id="height" type="number" min="1" value="30" oninput="calculate()" placeholder="Tinggi">
+</div>
+<div class="hint">Contoh: 50 × 40 × 30 cm. Jika ukuran tiap koli berbeda, konfirmasikan kembali ke admin.</div>
+</div>
+
+</div>
+
+<div class="result">
+<h3>📋 Hasil Perhitungan</h3>
+<div class="rows">
+<div class="row"><span>Tujuan</span><strong id="rDest">Jakarta</strong></div>
+<div class="row"><span>Biaya per SMU</span><strong id="rSmu">Rp 50.000</strong></div>
+<div class="row"><span>Berat aktual</span><strong id="rActual">10 kg</strong></div>
+<div class="row"><span>Berat volumetrik</span><strong id="rVol">12 kg</strong></div>
+<div class="row"><span>Berat yang ditagihkan</span><strong id="rCharge">12 kg</strong></div>
+<div class="row"><span>Tarif dasar</span><strong id="rRate">Rp 25.000/kg</strong></div>
+<div class="row"><span>Layanan</span><strong id="rService">Air Freight</strong></div>
+</div>
+<div class="total" id="total">Rp 300.000</div>
+<div style="text-align:center;color:#667085">Estimasi biaya pengiriman</div>
+<div class="actions">
+<a id="quote" class="btn" target="_blank" href="#">💬 Minta Quote via WhatsApp</a>
+</div>
+</div>
+
+<p class="note">
+* Tarif pada kalkulator adalah tarif contoh/demo dan bukan tarif resmi maskapai atau forwarder.
+Perhitungan volumetrik menggunakan rumus (P × L × T × koli) ÷ 6000. Minimum charge 10 kg. Biaya SMU Rp 50.000 per dokumen. Tarif aktual dapat berubah berdasarkan komoditas, surcharge, handling, bea/cukai, asuransi, dan ketentuan layanan.
+</p>
+</div>
+</section>
+
+<section class="container">
+<h2 class="title">Layanan Kami</h2>
+<p class="sub">Solusi logistik udara untuk kebutuhan domestik dan internasional.</p>
+<div class="cards">
+<div class="card"><div class="icon">✈️</div><h3>Air Freight</h3><p>Pengiriman udara untuk kebutuhan yang mengutamakan kecepatan.</p></div>
+<div class="card"><div class="icon">📦</div><h3>Door-to-Door</h3><p>Konsultasikan kebutuhan penjemputan dan pengiriman barang Anda.</p></div>
+<div class="card"><div class="icon">🌎</div><h3>International Cargo</h3><p>Layanan pengiriman ke berbagai tujuan internasional sesuai rute yang tersedia.</p></div>
+</div>
+</section>
+
+<section class="contact">
+<div class="container">
+<h2>Butuh Harga Resmi?</h2>
+<p>Hubungi Saichu Agus untuk pengecekan tarif dan ketentuan pengiriman.</p>
+<p><strong>📱 0812 2023 2955</strong></p>
+<p>📍 Suwarna Business Park, Cengkareng, Soekarno-Hatta</p>
+<a class="btn" href="https://wa.me/6281220232955?text=Halo%20Pak%20Saichu%2C%20saya%20ingin%20cek%20tarif%20logistik%20udara." target="_blank">💬 Hubungi via WhatsApp</a>
+</div>
+</section>
+
+<footer>© 2026 Saichu Agus • Air Logistics<br>Tarif acuan publik ditambah Rp2.500/kg; silakan konfirmasi tarif final sebelum pengiriman.</footer>
+
+<script>
+const rates={'AAP': 47500, 'AMQ': 60500, 'BDJ': 39500, 'BEJ': 71500, 'BIK': 87500, 'BKS': 25500, 'BPN': 36000, 'BTH': 33500, 'BTJ': 42500, 'BWX': 25500, 'DHX': 25500, 'DJB': 25500, 'DJJ': 82500, 'DPS': 22500, 'DTB': 38000, 'GNS': 58500, 'GTO': 60000, 'KDI': 57000, 'KNO': 35500, 'KOE': 58500, 'LBJ': 61000, 'LOP': 30000, 'MDC': 62000, 'MKQ': 98500, 'MLG': 27500, 'PDG': 28500, 'PGK': 30500, 'PKN': 36000, 'PKU': 33500, 'PKY': 34000, 'PLM': 29500, 'PLW': 58000, 'PNK': 34500, 'SOC': 25500, 'SOQ': 80500, 'SRG': 25500, 'SUB': 27500, 'TIM': 114000, 'TJQ': 34000, 'TKG': 25500, 'TMC': 64000, 'TNJ': 55500, 'TRK': 51500, 'TTE': 70000, 'UPG': 50000, 'YIA': 27000};
+const SMU_FEE=50000;
+const MIN_CHARGE_KG=10;
+function rupiah(n){return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Math.round(n))}
+function num(id){return Math.max(parseFloat(document.getElementById(id).value)||0,0)}
+function calculate(){
+ const dest=document.getElementById('destination').value;
+ const service=document.getElementById('service');
+ const multiplier=parseFloat(service.value);
+ const serviceName=service.options[service.selectedIndex].text;
+ const actual=num('weight'), pieces=Math.max(Math.floor(num('pieces')),1);
+ const L=num('length'), W=num('width'), H=num('height');
+ const volumetric=(L*W*H*pieces)/6000;
+ const charge=Math.max(actual,volumetric,MIN_CHARGE_KG);
+ const rate=rates[dest];
+ const freight=charge*rate*multiplier;
+ const total=freight+SMU_FEE;
+
+ document.getElementById('rDest').textContent=document.querySelector('#destination option:checked').textContent.split(' — ')[0];
+ document.getElementById('rActual').textContent=actual.toFixed(1)+' kg';
+ document.getElementById('rVol').textContent=volumetric.toFixed(1)+' kg';
+ document.getElementById('rCharge').textContent=charge.toFixed(1)+' kg';
+ document.getElementById('rRate').textContent=rupiah(rate)+'/kg';
+ document.getElementById('rSmu').textContent=rupiah(SMU_FEE);
+ document.getElementById('rService').textContent=serviceName;
+ document.getElementById('total').textContent=rupiah(total);
+
+ const destLabel=document.querySelector('#destination option:checked').textContent;
+ const msg=`Halo Pak Saichu, saya ingin meminta quote logistik udara.%0A%0ATujuan: ${destLabel}%0ALayanan: ${serviceName}%0ABerat aktual: ${actual.toFixed(1)} kg%0AJumlah koli: ${pieces}%0ADimensi/koli: ${L} × ${W} × ${H} cm%0ABerat volumetrik: ${volumetric.toFixed(1)} kg%0ABerat ditagihkan (min. 10 kg): ${charge.toFixed(1)} kg%0ATarif: ${rupiah(rate)}/kg%0ABiaya SMU: ${rupiah(SMU_FEE)}%0AEstimasi total: ${rupiah(total)}%0A%0AMohon konfirmasi tarif dan ketentuan aktual.`;
+ document.getElementById('quote').href='https://wa.me/6281220232955?text='+msg;
+}
+calculate();
+</script>
+</body>
+</html>
