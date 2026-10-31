@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f2747">
+<title>Rimbun Air Freight - Kalkulator Ongkir</title>
+<style>
+:root{
+  --navy:#0f2747; --blue:#1769aa; --light:#f3f7fb; --card:#fff;
+  --text:#172033; --muted:#64748b; --line:#dbe3ec; --green:#087443;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--light);color:var(--text)}
+header{background:linear-gradient(135deg,#0f2747,#1769aa);color:white;padding:34px 18px 42px;text-align:center}
+header h1{margin:0 0 8px;font-size:31px}
+header p{margin:0;opacity:.9;font-size:16px}
+.wrap{max-width:900px;margin:-22px auto 40px;padding:0 14px}
+.card{background:var(--card);border-radius:22px;box-shadow:0 10px 35px rgba(15,39,71,.10);padding:24px;margin-bottom:18px}
+h2{font-size:21px;margin:0 0 20px;color:var(--navy)}
+label{display:block;font-weight:700;margin:17px 0 8px}
+select,input{width:100%;padding:15px 14px;border:1px solid #cbd5e1;border-radius:12px;font-size:16px;background:white;color:#111827}
+select:focus,input:focus{outline:2px solid #9ec8ee;border-color:#1769aa}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hint{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.45}
+button{width:100%;border:0;border-radius:13px;padding:16px;background:#1769aa;color:white;font-size:17px;font-weight:700;margin-top:22px;cursor:pointer}
+button:hover{filter:brightness(.95)}
+.result{display:none;background:#eef8f3;border:1px solid #b9e2cc;border-radius:16px;padding:18px;margin-top:20px}
+.result.show{display:block}
+.result-title{font-weight:800;color:var(--green);font-size:19px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px dashed #c9d8d0}
+.row:last-child{border-bottom:0}
+.total{font-size:26px;font-weight:800;color:var(--navy);padding-top:12px}
+.badge{display:inline-block;background:#e7f0fa;color:#14538a;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}
+table{border-collapse:collapse;width:100%;min-width:620px;background:white}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+th{background:#edf4fa;color:var(--navy);position:sticky;top:0}
+td:nth-child(1),td:nth-child(3),td:nth-child(4){white-space:nowrap}
+.search{margin-bottom:12px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 18px 30px}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:650px){
+  header h1{font-size:25px}
+  .grid{grid-template-columns:1fr}
+  .dim{grid-template-columns:1fr 1fr 1fr}
+  .card{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>RIMBUN AIR FREIGHT</h1>
+  <p>Kalkulator Ongkir Udara dari Jakarta</p>
+</header>
+
+<main class="wrap">
+
+<section class="card">
+  <h2>🧮 Hitung Ongkir</h2>
+
+  <label for="destination">Tujuan</label>
+  <select id="destination"></select>
+  <div class="hint">Asal pengiriman: Jakarta (CGK) • Tarif sesuai daftar yang Anda berikan.</div>
+
+  <div class="grid">
+    <div>
+      <label for="service">Jenis Layanan</label>
+      <select id="service">
+        <option>Standard Air Freight</option>
+        <option>Air Freight - Custom Quote</option>
+      </select>
+    </div>
+    <div>
+      <label for="weight">Berat Aktual (kg)</label>
+      <input id="weight" type="number" min="0.1" step="0.1" value="10">
+    </div>
+  </div>
+
+  <label for="pieces">Jumlah Koli</label>
+  <input id="pieces" type="number" min="1" step="1" value="1">
+
+  <label>Dimensi per Koli (cm)</label>
+  <div class="dim">
+    <input id="length" type="number" min="1" step="1" value="50" placeholder="Panjang">
+    <input id="width" type="number" min="1" step="1" value="40" placeholder="Lebar">
+    <input id="height" type="number" min="1" step="1" value="30" placeholder="Tinggi">
+  </div>
+  <div class="hint">Berat volumetrik dihitung dengan rumus: P × L × T × jumlah koli ÷ 6000.</div>
+
+  <button type="button" onclick="calculate()">HITUNG ONGKIR</button>
+
+  <div id="result" class="result">
+    <div class="result-title">Hasil Perhitungan</div>
+    <div class="row"><span>Rute</span><strong id="route"></strong></div>
+    <div class="row"><span>Tarif</span><strong id="rate"></strong></div>
+    <div class="row"><span>Berat aktual</span><strong id="actual"></strong></div>
+    <div class="row"><span>Berat volumetrik</span><strong id="volume"></strong></div>
+    <div class="row"><span>Berat yang ditagihkan</span><strong id="chargeable"></strong></div>
+    <div class="row"><span>Jumlah koli</span><strong id="pieceResult"></strong></div>
+    <div class="row"><span>Layanan</span><strong id="serviceResult"></strong></div>
+    <div class="total" id="total"></div>
+    <div class="small">Estimasi berdasarkan tarif/kg pada daftar. Biaya tambahan seperti handling, packing, surcharge, pajak, asuransi, atau minimum charge belum termasuk.</div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>📋 Daftar Tarif Jakarta → Tujuan</h2>
+  <input class="search" id="search" type="search" placeholder="Cari tujuan atau kode bandara..." oninput="renderTable()">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>No</th><th>Tujuan</th><th>Kode</th><th>Tarif/kg</th></tr></thead>
+      <tbody id="tariffTable"></tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:12px">Catatan: data No. 66 tidak terdapat pada gambar sumber yang diberikan, sehingga tidak dibuat-buat.</p>
+</section>
+
+<section class="card">
+  <h2>ℹ️ Cara Menggunakan</h2>
+  <ol style="line-height:1.8;padding-left:22px">
+    <li>Pilih kota tujuan.</li>
+    <li>Masukkan berat aktual dan jumlah koli.</li>
+    <li>Masukkan panjang, lebar, dan tinggi setiap koli.</li>
+    <li>Sistem membandingkan berat aktual dengan berat volumetrik.</li>
+    <li>Berat yang lebih besar menjadi berat yang ditagihkan.</li>
+    <li>Estimasi ongkir = berat ditagihkan × tarif tujuan.</li>
+  </ol>
+</section>
+
+</main>
+
+<footer>
+  Saichu Agus • 081220232955<br>
+  Alamat: Suwarna Business Park
+</footer>
+
+<script>
+const tariffs = [
+["Ambon","AMQ",64200],["Batam","BTH",36400],["Banjarmasin","BDJ",35200],
+["Balikpapan","BPN",37200],["Banda Aceh","BTJ",45200],["Banyuwangi","BWX",20600],
+["Bengkulu","BKS",19100],["Jayapura","DJJ",97100],["Denpasar","DPS",23600],
+["Jambi","DJB",19200],["Kupang","KOE",70100],["Kendari","KDI",59300],
+["Kualanamu","KNO",31700],["Lombok","LOP",27200],["Labuan Bajo","LBJ",56600],
+["Manado","MDC",63000],["Malang","MLG",20800],["Pekanbaru","PKU",28100],
+["Padang","PDG",23700],["Palembang","PLM",18900],["Palu","PLW",66600],
+["Pontianak","PNK",29400],["Palangkaraya","PKY",38500],["Pangkal Pinang","PGK",24400],
+["Samarinda","AAP",44200],["Surabaya","SUB",18600],["Silangit","DTB",32000],
+["Semarang","SRG",18400],["Tanjung Pinang","TNJ",40000],["Tanjung Pandan","TJQ",29000],
+["Makassar","UPG",44600],["Yogyakarta","YIA",18400],["Ternate","TTE",71500],
+["Tarakan","TRK",83000],["Timika","TIM",84400],["Sorong","SOQ",81300],
+["Solo","SOC",18400],["Pangkalan Bun","PKN",56800],["Gorontalo","GTO",61000],
+["Merauke","MKQ",98700],["Biak","BIK",79000],["Tobelo","KAZ",91900],
+["Gunung Sitoli","GNS",57000],["Bima","BMU",103100],["Wamena","WMX",106200],
+["Nabire","NBX",127000],["Dobo","DOB",89000],["Tual","LUV",97000],
+["Toraja","TRT",59100],["Morowali","MOH",64500],["Putussibau","PSU",61700],
+["Sintang","SQG",49000],["Saumlaki","SXK",98700],["Larantuka","LKA",88200],
+["Lembata","LWE",85900],["Maumere","MOF",78800],["Ende","ENE",71200],
+["Waingapu","WGP",77000],["Tambolaka","TMC",83700],["Bajawa","BJW",88700],
+["Pulau Alor","ARD",87700],["Labuha","LAH",87000],["Malinau","LNU",64500],
+["Morotai","OTI",99000],["Fak-Fak","FKQ",133900],["Ewer","EWE",133700],
+["Papua Pegunungan","DEX",101700],["Halmahera Utara","GLX",72000],["Naha","NAH",88200],
+["Namlea","NAM",74100],["Natuna","NTX",63000],["Kota Baru","KBU",48000],
+["Pomala","KXB",64000],["Raha","RAQ",68000],["Jember","JBB",46000],
+["Simeulue","SMG",54000],["Nagan Raya","MEQ",56000],["Kab. Kerinci","KRC",40000],
+["Kab. Selayar","KSR",48000],["Batu Licin","BTW",58000],["Tanjung Selor","TJS",68000],
+["Muara Bungo","BUU",40000],["Kab. Morowali","MWS",64500],["Luwuk","LUW",59800],
+["Mamuju","MJU",83700],["Sumbawa","SWQ",41100],["Atambua","ABU",85100],
+["Sibolga","FLZ",53700],["Ketapang","KTG",52000],["Lhokseumawe","LSW",44800],
+["Lasikin","LKI",55300],["Dhoho","DHX",25100],["Papua Pegunungan","DEX",101700],
+["Melonguiane","MNA",91100],["Larantuka","LKA",88200],["Lembata","LWE",85900],
+["Maumere","MOF",78800],["Ende","ENE",71200]
+];
+
+const rupiah = n => "Rp " + Math.round(n).toLocaleString("id-ID");
+const destination = document.getElementById("destination");
+
+tariffs.forEach((t,i)=>{
+  const opt=document.createElement("option");
+  opt.value=i;
+  opt.textContent=`${t[0]} (${t[1]}) — ${rupiah(t[2])}/kg`;
+  destination.appendChild(opt);
+});
+
+function renderTable(){
+  const q=document.getElementById("search").value.toLowerCase().trim();
+  const body=document.getElementById("tariffTable");
+  body.innerHTML="";
+  tariffs.forEach((t,i)=>{
+    if(!q || t[0].toLowerCase().includes(q) || t[1].toLowerCase().includes(q)){
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${i+1}</td><td>${t[0]}</td><td><span class="badge">${t[1]}</span></td><td>${rupiah(t[2])}</td>`;
+      body.appendChild(tr);
+    }
+  });
+}
+renderTable();
+
+function calculate(){
+  const t=tariffs[Number(destination.value)];
+  const actual=Number(document.getElementById("weight").value);
+  const pieces=Number(document.getElementById("pieces").value);
+  const l=Number(document.getElementById("length").value);
+  const w=Number(document.getElementById("width").value);
+  const h=Number(document.getElementById("height").value);
+
+  if([actual,pieces,l,w,h].some(v=>!Number.isFinite(v)||v<=0)){
+    alert("Mohon isi semua data dengan angka lebih dari 0.");
+    return;
+  }
+
+  const volumetric=(l*w*h*pieces)/6000;
+  const chargeable=Math.max(actual,volumetric);
+  const total=chargeable*t[2];
+
+  document.getElementById("route").textContent=`Jakarta (CGK) → ${t[0]} (${t[1]})`;
+  document.getElementById("rate").textContent=`${rupiah(t[2])}/kg`;
+  document.getElementById("actual").textContent=`${actual.toLocaleString("id-ID")} kg`;
+  document.getElementById("volume").textContent=`${volumetric.toLocaleString("id-ID",{maximumFractionDigits:2})} kg`;
+  document.getElementById("chargeable").textContent=`${chargeable.toLocaleString("id-ID",{maximumFractionDigits:2})} kg`;
+  document.getElementById("pieceResult").textContent=pieces;
+  document.getElementById("serviceResult").textContent=document.getElementById("service").value;
+  document.getElementById("total").textContent=`ESTIMASI ONGKIR: ${rupiah(total)}`;
+  document.getElementById("result").classList.add("show");
+}
+</script>
+</body>
+</html>
